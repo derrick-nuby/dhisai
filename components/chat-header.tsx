@@ -12,6 +12,7 @@ import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { type VisibilityType, VisibilitySelector } from './visibility-selector';
+import { Settings } from 'lucide-react';
 
 function PureChatHeader({
   chatId,
@@ -32,7 +33,6 @@ function PureChatHeader({
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
       <SidebarToggle />
-
       {(!open || windowWidth < 768) && (
         <Tooltip>
           <TooltipTrigger asChild>
@@ -51,14 +51,12 @@ function PureChatHeader({
           <TooltipContent>New Chat</TooltipContent>
         </Tooltip>
       )}
-
       {!isReadonly && (
         <ModelSelector
           selectedModelId={selectedModelId}
           className="order-1 md:order-2"
         />
       )}
-
       {!isReadonly && (
         <VisibilitySelector
           chatId={chatId}
@@ -67,6 +65,15 @@ function PureChatHeader({
         />
       )}
 
+      <Button
+        className="hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto "
+        variant="outline"
+        asChild
+      >
+        <Link href="/settings">
+          <Settings className="size-5" />
+        </Link>
+      </Button>
     </header>
   );
 }
