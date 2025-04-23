@@ -1,62 +1,83 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Chat SDK</h1>
-</a>
+# DHIS2 AI Assistant
 
-<p align="center">
-    Chat SDK is a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
-</p>
+## Project Description
 
-<p align="center">
-  <a href="https://chat-sdk.dev"><strong>Read Docs</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#model-providers"><strong>Model Providers</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#running-locally"><strong>Running locally</strong></a>
-</p>
-<br/>
+Welcome to the DHIS2 AI Assistant project! This is an innovative application that leverages artificial intelligence to interact with DHIS2, a widely used health management data platform. The DHIS2 AI Assistant enables users to query, analyze, and visualize health data from DHIS2 systems using natural language, making it easier for health officials, data analysts, and other stakeholders to access and interpret complex data.
 
-## Features
+## Key Features
 
-- [Next.js](https://nextjs.org) App Router
-  - Advanced routing for seamless navigation and performance
-  - React Server Components (RSCs) and Server Actions for server-side rendering and increased performance
-- [AI SDK](https://sdk.vercel.ai/docs)
-  - Unified API for generating text, structured objects, and tool calls with LLMs
-  - Hooks for building dynamic chat and generative user interfaces
-  - Supports xAI (default), OpenAI, Fireworks, and other model providers
-- [shadcn/ui](https://ui.shadcn.com)
-  - Styling with [Tailwind CSS](https://tailwindcss.com)
-  - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
-- Data Persistence
-  - [Neon Serverless Postgres](https://vercel.com/marketplace/neon) for saving chat history and user data
-  - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
-- [Auth.js](https://authjs.dev)
-  - Simple and secure authentication
+- **Natural Language Querying**: Users can ask questions in plain language, and the AI will automatically interpret the query, fetch the relevant data from DHIS2, and present the response with contextual insights.
+- **Multi-Instance Integration**: The assistant can handle multiple DHIS2 instances, allowing users to compare and analyze data across different regions, projects, or timeframes.
+- **Data Visualization**: The tool generates interactive visualizations like bar charts, line graphs, and heatmaps, which help users easily interpret trends and patterns in health data.
+- **Project-Based Organization**: Users can organize DHIS2 instances into projects, allowing for more focused data analysis and streamlined workflows.
+- **Report Generation**: The AI Assistant can generate comprehensive reports, including charts, insights, and summaries, which can be downloaded in various formats like PDF or Excel.
+- **Suggested Follow-up Prompts**: After a query, the assistant suggests related questions or areas of exploration, helping users dive deeper into the data.
 
-## Model Providers
+## How It Works
 
-This template ships with [xAI](https://x.ai) `grok-2-1212` as the default chat model. However, with the [AI SDK](https://sdk.vercel.ai/docs), you can switch LLM providers to [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://sdk.vercel.ai/providers/ai-sdk-providers) with just a few lines of code.
+1. **Connect DHIS2 Instances**: Users input the URL and API token for their DHIS2 instance(s).
+2. **Ask Questions**: Users type in natural language queries (e.g., "What is the malaria incidence rate in Kigali for Q2 2025?").
+3. **Data Retrieval & Analysis**: The AI fetches the relevant data, performs any necessary analytics, and presents the results.
+4. **Visualizations & Reporting**: The tool generates charts and graphs based on the data, and users can download full reports.
 
-## Deploy Your Own
+## Technologies Used
 
-You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
+- **AI Engine**: Powered by OpenAI's GPT models for natural language processing.
+- **Backend**: Integration with DHIS2 APIs for data fetching.
+- **Frontend**: User interface built with React.js (or Vue.js, depending on your implementation).
+- **Data Visualization**: Using libraries like Plotly or Vega for rendering charts and graphs.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fai-chatbot&env=AUTH_SECRET&envDescription=Generate%20a%20random%20secret%20to%20use%20for%20authentication&envLink=https%3A%2F%2Fgenerate-secret.vercel.app%2F32&project-name=my-awesome-chatbot&repository-name=my-awesome-chatbot&demo-title=AI%20Chatbot&demo-description=An%20Open-Source%20AI%20Chatbot%20Template%20Built%20With%20Next.js%20and%20the%20AI%20SDK%20by%20Vercel&demo-url=https%3A%2F%2Fchat.vercel.ai&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22ai%22%2C%22productSlug%22%3A%22grok%22%2C%22integrationSlug%22%3A%22xai%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D)
+## Installation
 
-## Running locally
+### Prerequisites
 
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+- Node.js (for backend and frontend development)
+- A DHIS2 instance with API access and an API token
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various AI and authentication provider accounts.
+### Steps
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+1. Clone the repository:
 
-```bash
-pnpm install
-pnpm dev
-```
+   ```bash
+   git clone ...
+   cd dhis2-ai-assistant
+   ```
 
-Your app template should now be running on [localhost:3000](http://localhost:3000).
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set up your DHIS2 instance URL and API token in the configuration file (`config.js` or `.env`).
+
+4. Start the development server:
+
+   ```bash
+   npm start
+   ```
+
+5. Navigate to `http://localhost:3000` to interact with the DHIS2 AI Assistant.
+
+## Contributing
+
+We welcome contributions to this project! If you want to contribute, feel free to:
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Submit a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- DHIS2 for providing the platform and APIs for health data management.
+- OpenAI for enabling powerful AI-driven interaction with data.
+- The contributors and the open-source community for their continuous support.
+
+## Contact
+
+For any inquiries or feedback, feel free to reach out at [hello@derricknuby.com](mailto:hello@derricknuby.com).

@@ -4,12 +4,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 
 import './globals.css';
+import { generateMetadata } from './metadata';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Next.js Chatbot Template',
-  description: 'Next.js chatbot template using the AI SDK.',
-};
+export { generateMetadata };
 
 export const viewport = {
   maximumScale: 1, // Disable auto-zoom on mobile Safari

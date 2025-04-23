@@ -56,7 +56,8 @@ export default function Page() {
         </div>
         <AuthForm action={handleSubmit} defaultEmail={email}>
           <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
-          <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
+
+          {/* <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Don't have an account? "}
             <Link
               href="/register"
@@ -65,6 +66,36 @@ export default function Page() {
               Sign up
             </Link>
             {' for free.'}
+          </p> */}
+
+          <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
+            {
+              "Don't have an account? Contact Derrick, the site admin, for help "
+            }
+            <a
+              href="https://github.com/Derrick-Nuby"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
+            >
+              GitHub
+            </a>
+            {' | '}
+            <a
+              href="mailto:hello@derricknuby.com"
+              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
+            >
+              Email
+            </a>
+            {' | '}
+            <a
+              href="https://www.linkedin.com/in/derrick-nuby/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
+            >
+              LinkedIn
+            </a>
           </p>
         </AuthForm>
       </div>
