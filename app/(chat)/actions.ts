@@ -10,6 +10,7 @@ import {
 } from '@/lib/db/queries';
 import { VisibilityType } from '@/components/visibility-selector';
 import { myProvider } from '@/lib/ai/providers';
+import DharsiAISystemPrompt from '@/utils/dharsi';
 
 export async function saveChatModelAsCookie(model: string) {
   const cookieStore = await cookies();
@@ -23,7 +24,7 @@ export async function generateTitleFromUserMessage({
 }) {
   const { text: title } = await generateText({
     model: myProvider.languageModel('title-model'),
-    system: `\n
+    system: `${DharsiAISystemPrompt()}\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long
     - the title should be a summary of the user's message

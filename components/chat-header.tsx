@@ -65,8 +65,11 @@ function PureChatHeader({
         />
       )}
 
+      <span className='order-4 md:ml-auto'>version 0.0.2</span>
+
+
       <Button
-        className="hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto "
+        className="hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-5 md:ml-auto "
         variant="outline"
         asChild
       >

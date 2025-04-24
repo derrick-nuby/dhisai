@@ -2,6 +2,7 @@ import { smoothStream, streamText } from 'ai';
 import { myProvider } from '@/lib/ai/providers';
 import { createDocumentHandler } from '@/lib/artifacts/server';
 import { updateDocumentPrompt } from '@/lib/ai/prompts';
+import DharsiAISystemPrompt from '@/utils/dharsi';
 
 export const textDocumentHandler = createDocumentHandler<'text'>({
   kind: 'text',
@@ -10,8 +11,7 @@ export const textDocumentHandler = createDocumentHandler<'text'>({
 
     const { fullStream } = streamText({
       model: myProvider.languageModel('artifact-model'),
-      system:
-        'Write about the given topic. Markdown is supported. Use headings wherever appropriate.',
+      system: `${DharsiAISystemPrompt()}\nWrite about the given topic. Markdown is supported. Use headings wherever appropriate.`,
       experimental_transform: smoothStream({ chunking: 'word' }),
       prompt: title,
     });

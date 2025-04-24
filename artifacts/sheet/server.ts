@@ -3,6 +3,7 @@ import { sheetPrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
 import { createDocumentHandler } from '@/lib/artifacts/server';
 import { streamObject } from 'ai';
 import { z } from 'zod';
+import DharsiAISystemPrompt from '@/utils/dharsi';
 
 export const sheetDocumentHandler = createDocumentHandler<'sheet'>({
   kind: 'sheet',
@@ -11,7 +12,7 @@ export const sheetDocumentHandler = createDocumentHandler<'sheet'>({
 
     const { fullStream } = streamObject({
       model: myProvider.languageModel('artifact-model'),
-      system: sheetPrompt,
+      system: `${DharsiAISystemPrompt()}\n\n${sheetPrompt}`,
       prompt: title,
       schema: z.object({
         csv: z.string().describe('CSV data'),

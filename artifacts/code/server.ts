@@ -1,8 +1,9 @@
-import { z } from 'zod';
-import { streamObject } from 'ai';
 import { myProvider } from '@/lib/ai/providers';
 import { codePrompt, updateDocumentPrompt } from '@/lib/ai/prompts';
 import { createDocumentHandler } from '@/lib/artifacts/server';
+import { streamObject } from 'ai';
+import { z } from 'zod';
+import DharsiAISystemPrompt from '@/utils/dharsi';
 
 export const codeDocumentHandler = createDocumentHandler<'code'>({
   kind: 'code',
@@ -11,7 +12,7 @@ export const codeDocumentHandler = createDocumentHandler<'code'>({
 
     const { fullStream } = streamObject({
       model: myProvider.languageModel('artifact-model'),
-      system: codePrompt,
+      system: `${DharsiAISystemPrompt()}\n\n${codePrompt}`,
       prompt: title,
       schema: z.object({
         code: z.string(),
