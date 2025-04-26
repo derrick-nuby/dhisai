@@ -23,22 +23,27 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
       body: z.record(z.any()).optional().describe('Body content for POST/PUT requests'),
     }),
     execute: async ({ instanceIdentifier, path, method, query, body }) => {
+      console.log(`[dhisRequest] Starting execution with parameters:`, { instanceIdentifier, path, method });
+      
       // Check user authentication
-      if (!session.user?.id) {
+      if (!session?.user?.id) {
+        console.error('[dhisRequest] User not authenticated');
         throw new Error('User not authenticated');
       }
 
-      const userId = session.user?.id;
-      if (!userId) {
-        throw new Error('User not authenticated');
-      }
+      const userId = session.user.id;
 
       // Get all instances for the current user if not already cached
       if (!instanceCache[userId]) {
+        console.log(`[dhisRequest] Instances not in cache, fetching for user ${userId}`);
         const userInstances = await getInstancesByUserId(userId);
+        
         if (!userInstances || userInstances.length === 0) {
+          console.error('[dhisRequest] No DHIS2 instances available for this user');
           throw new Error('No DHIS2 instances available. Please add an instance in Settings.');
         }
+        
+        console.log(`[dhisRequest] Found ${userInstances.length} instances, building cache`);
         
         // Cache instances by both ID and name for easy lookup
         instanceCache[userId] = {
@@ -58,6 +63,8 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
       
       // Find instance by identifier (could be ID or name)
       if (instanceIdentifier) {
+        console.log(`[dhisRequest] Looking for instance: "${instanceIdentifier}"`);
+        
         // Try to find by ID first
         instance = cache.byId[instanceIdentifier];
         
@@ -67,11 +74,14 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
         }
         
         if (!instance) {
-          throw new Error(`Instance "${instanceIdentifier}" not found. Available instances: ${cache.all.map((i: { name: any; }) => i.name).join(', ')}`);
+          const availableInstances = cache.all.map((i: { name: any; }) => i.name).join(', ');
+          console.error(`[dhisRequest] Instance "${instanceIdentifier}" not found. Available: ${availableInstances}`);
+          throw new Error(`Instance "${instanceIdentifier}" not found. Available instances: ${availableInstances}`);
         }
       } else {
         // Use the first available instance if no identifier provided
         instance = cache.all[0];
+        console.log(`[dhisRequest] No instance specified, using default: ${instance.name}`);
       }
 
       // Normalize path (remove leading slash if any)
@@ -101,6 +111,8 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
         });
       }
 
+      console.log(`[dhisRequest] Constructed API URL: ${apiUrl.toString()}`);
+
       // Build headers
       const headers: HeadersInit = {
         'Content-Type': 'application/json',
@@ -109,17 +121,20 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
 
       // Add authentication
       if (instance.apiToken) {
+        console.log(`[dhisRequest] Using API token authentication`);
         headers['Authorization'] = `ApiToken ${instance.apiToken}`;
       } else if (instance.username && instance.password) {
+        console.log(`[dhisRequest] Using Basic authentication with username: ${instance.username}`);
         const auth = Buffer.from(`${instance.username}:${instance.password}`).toString('base64');
         headers['Authorization'] = `Basic ${auth}`;
       } else {
+        console.error(`[dhisRequest] No authentication credentials available for instance "${instance.name}"`);
         throw new Error(`No authentication credentials available for instance "${instance.name}"`);
       }
 
       try {
         // Log the request for debugging
-        console.log(`Making ${method} request to ${apiUrl.toString()}`);
+        console.log(`[dhisRequest] Making ${method} request to ${apiUrl.toString()}`);
         
         // Make the request
         const response = await fetch(apiUrl.toString(), {
@@ -128,14 +143,33 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
           body: (method === 'POST' || method === 'PUT') && body ? JSON.stringify(body) : undefined,
         });
 
+        console.log(`[dhisRequest] Received response with status: ${response.status}`);
+
         if (!response.ok) {
           const errorText = await response.text();
+          console.error(`[dhisRequest] API error: ${response.status} ${response.statusText} - ${errorText}`);
           throw new Error(`DHIS2 API error: ${response.status} ${response.statusText} - ${errorText}`);
         }
 
         const data = await response.json();
+        console.log(`[dhisRequest] Successfully parsed response data`);
 
-        // Send the data to the stream
+        // Format the data nicely for a code block
+        const formattedResponse = JSON.stringify(data, null, 2);
+        
+        // Create a formatted message that includes the code block with the response data
+        const responseMessage = `
+## DHIS2 API Response
+**Instance:** ${instance.name}
+**Endpoint:** ${apiPath}
+**Status:** ${response.status} OK
+
+\`\`\`json
+${formattedResponse}
+\`\`\`
+`;
+
+        // Send the datastream for client-side handling (not displayed directly in chat)
         dataStream.writeData({
           type: 'dhis2-response',
           content: data,
@@ -147,15 +181,29 @@ export const dhisRequest = ({ session, dataStream }: DhisRequestProps) =>
           instanceName: instance.name,
           instanceUrl: instance.url,
           endpoint: apiPath,
-          data,
+          message: responseMessage, // This will be displayed in the chat as formatted markdown
+          data: data, // Still include the raw data for potential programmatic use
         };
       } catch (error: any) {
-        console.error('DHIS2 API request failed:', error);
+        console.error('[dhisRequest] API request failed:', error);
+        
+        // Create an error message in a code block for better visualization
+        const errorMessage = `
+## DHIS2 API Error
+**Instance:** ${instance.name}
+**Endpoint:** ${apiPath}
+
+\`\`\`
+${error.message || 'An error occurred when calling the DHIS2 API'}
+\`\`\`
+`;
+
         return {
           success: false,
           instanceName: instance.name,
           instanceUrl: instance.url,
           endpoint: apiPath,
+          message: errorMessage, // Formatted error for display
           error: error.message || 'An error occurred when calling the DHIS2 API',
         };
       }
