@@ -1,0 +1,872 @@
+Here’s a concise overview of the DHIS2 Web API focused on GET methods, key concepts, and all core endpoints for easy reference:
+
+**DHIS2 Web API – Key Concepts**  
+DHIS2 exposes a RESTful API at `/api`, with optional versioning (`/api/{ver}`), schema introspection, metadata export/import and full CRUD on every metadata entity. GET requests support powerful query parameters for pagination, sorting, filtering, field‐selection and translations. Partial updates use JSON Patch via `PATCH` (not GET). 
+
+**Core GET Concepts**  
+- **Entry point & versioning**  
+  - `GET /api` – lists all resources in HTML, XML, JSON, JSONP  
+  - `GET /api/{version}` – locks to a specific DHIS2 API version   
+- **Pagination & ordering**  
+  - `paging` (true/false; default true)  
+  - `page` (number; default 1)  
+  - `pageSize` (number; default 50)  
+  - `order=property:asc/desc[,…]`   
+- **Filtering**  
+  - `query=<text>` for name‐based searches  
+  - `filter=prop:operator:value` (operators: eq, ne, like, in, gt, lt, etc.)  
+  - `rootJunction=OR` to switch from AND to OR logic  
+  - `identifiable:token:<terms>` for multi‐field token searches  
+  - `indexableOnly=true` on trackedEntityAttributes   
+- **Field selection & transformers**  
+  - `fields=<field1>,<field2>[,…]` or presets `:all`, `:identifiable`, `:nameable`  
+  - Transformers: `~rename(newName)`, `~size`, `~pluck(field)`, `~keyBy(field)`, `~paging(page;size)`   
+- **Translations**  
+  - `translate=true|false` (default true), `locale=<code>`  
+  - `GET /api/<resource>/<id>/translations`   
+- **Partial updates (JSON Patch)**  
+  - `PATCH /api/<resource>/<id>` with RFC 6902 ops (`add`,`remove`,`replace`) 
+
+**All Core GET Endpoints**  
+```
+# Entry & introspection
+GET /api
+GET /api/{version}
+GET /api/schemas[.json|.xml]
+GET /api/schemas/{type}.json
+GET /api/identifiableObjects/{id}
+
+# Metadata export
+GET /api/metadata
+
+# Per‐entity listing & detail
+GET /api/{entity}            # e.g. dataElements, indicatorGroups, organisationUnits, programs, dataSets, optionSets, categoryCombos, categoryOptionCombos, categoryOptions, dashboards, charts, maps, users, userRoles, predictiveModels
+GET /api/{entity}/{id}
+
+# Per‐entity with query params
+GET /api/{entity}?paging=&page=&pageSize=&order=&filter=&query=&fields=&translate=&locale=&rootJunction=&indexableOnly=
+
+# Metadata export with dependencies
+GET /api/{entity}/{id}/metadata.json    # for dataSets, programs, categoryCombos, dashboards, optionSets, dataElementGroups
+
+# Translations
+GET /api/{entity}/{id}/translations
+
+# Icons & static config
+GET /api/icons
+GET /api/icons/{key}
+GET /api/icons/{key}/icon
+GET /api/staticConfiguration/renderingOptions
+```
+_All metadata entities follow the same `/api/<entity>` pattern; simply substitute the entity name._ 
+
+Here are the remaining common metadata GET endpoints you’ll find under `/api/<entity>` (all support `?paging`, `?page`, `?pageSize`, `?order`, `?filter`, `?fields`, etc.) 
+
+```
+/api/aggregateExportDataSets
+/api/categories
+/api/categoryCombos
+/api/categoryOptions
+/api/categoryOptionCombos
+/api/categoryOptionGroups
+/api/categoryOptionGroupSets
+/api/constants
+/api/dataElements
+/api/dataElementGroups
+/api/dataSets
+/api/indicators
+/api/indicatorGroups
+/api/legendSets
+/api/optionSets
+/api/programs
+/api/programStages
+/api/programSections
+/api/programIndicators
+/api/trackedEntityTypes
+/api/trackedEntityAttributes
+/api/organisationUnits
+/api/organisationUnitLevels
+/api/organisationUnitGroups
+/api/validationRules
+/api/validationRuleGroups
+/api/dataApprovalLevels
+/api/dataApprovalWorkflows
+/api/predictiveModels
+/api/dashboards
+/api/charts
+/api/mapViews
+/api/users
+/api/userRoles
+/api/userGroups
+/api/interpretations
+/api/favorites
+/api/dataStore   
+```
+
+That completes the list of core GET-only metadata and system routes. Let me know if you need any of the non-metadata (analytics, events, data-entry, etc.) endpoints detailed as well!
+
+{
+  "resources": [
+  {
+  "displayName": "Documents",
+  "singular": "document",
+  "plural": "documents",
+  "href": "https://online.hisprwanda.org/pbf/api/documents"
+  },
+  {
+  "displayName": "Data Element Groups",
+  "singular": "dataElementGroup",
+  "plural": "dataElementGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/dataElementGroups"
+  },
+  {
+  "displayName": "Interpretations",
+  "singular": "interpretation",
+  "plural": "interpretations",
+  "href": "https://online.hisprwanda.org/pbf/api/interpretations"
+  },
+  {
+  "displayName": "Program Rule Actions",
+  "singular": "programRuleAction",
+  "plural": "programRuleActions",
+  "href": "https://online.hisprwanda.org/pbf/api/programRuleActions"
+  },
+  {
+  "displayName": "Data Approval Workflows",
+  "singular": "dataApprovalWorkflow",
+  "plural": "dataApprovalWorkflows",
+  "href": "https://online.hisprwanda.org/pbf/api/dataApprovalWorkflows"
+  },
+  {
+  "displayName": "Api Token",
+  "singular": "apiToken",
+  "plural": "apiToken",
+  "href": "https://online.hisprwanda.org/pbf/api/apiToken"
+  },
+  {
+  "displayName": "Data Entry Forms",
+  "singular": "dataEntryForm",
+  "plural": "dataEntryForms",
+  "href": "https://online.hisprwanda.org/pbf/api/dataEntryForms"
+  },
+  {
+  "displayName": "Indicator Group Sets",
+  "singular": "indicatorGroupSet",
+  "plural": "indicatorGroupSets",
+  "href": "https://online.hisprwanda.org/pbf/api/indicatorGroupSets"
+  },
+  {
+  "displayName": "Sql Views",
+  "singular": "sqlView",
+  "plural": "sqlViews",
+  "href": "https://online.hisprwanda.org/pbf/api/sqlViews"
+  },
+  {
+  "displayName": "Routes",
+  "singular": "route",
+  "plural": "routes",
+  "href": "https://online.hisprwanda.org/pbf/api/routes"
+  },
+  {
+  "displayName": "Legend Sets",
+  "singular": "legendSet",
+  "plural": "legendSets",
+  "href": "https://online.hisprwanda.org/pbf/api/legendSets"
+  },
+  {
+  "displayName": "Users",
+  "singular": "user",
+  "plural": "users",
+  "href": "https://online.hisprwanda.org/pbf/api/users"
+  },
+  {
+  "displayName": "Sms Commands",
+  "singular": "smsCommand",
+  "plural": "smsCommands",
+  "href": "https://online.hisprwanda.org/pbf/api/smsCommands"
+  },
+  {
+  "displayName": "Attributes",
+  "singular": "attribute",
+  "plural": "attributes",
+  "href": "https://online.hisprwanda.org/pbf/api/attributes"
+  },
+  {
+  "displayName": "Organisation Unit Group Sets",
+  "singular": "organisationUnitGroupSet",
+  "plural": "organisationUnitGroupSets",
+  "href": "https://online.hisprwanda.org/pbf/api/organisationUnitGroupSets"
+  },
+  {
+  "displayName": "Data Stores",
+  "singular": "dataStore",
+  "plural": "dataStores",
+  "href": "https://online.hisprwanda.org/pbf/api/dataStore"
+  },
+  {
+  "displayName": "Tracked Entity Instance Filters",
+  "singular": "trackedEntityInstanceFilter",
+  "plural": "trackedEntityInstanceFilters",
+  "href": "https://online.hisprwanda.org/pbf/api/trackedEntityInstanceFilters"
+  },
+  {
+  "displayName": "Category Option Groups",
+  "singular": "categoryOptionGroup",
+  "plural": "categoryOptionGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/categoryOptionGroups"
+  },
+  {
+  "displayName": "Category Option Group Sets",
+  "singular": "categoryOptionGroupSet",
+  "plural": "categoryOptionGroupSets",
+  "href": "https://online.hisprwanda.org/pbf/api/categoryOptionGroupSets"
+  },
+  {
+  "displayName": "Data Element Operands",
+  "singular": "dataElementOperand",
+  "plural": "dataElementOperands",
+  "href": "https://online.hisprwanda.org/pbf/api/dataElementOperands"
+  },
+  {
+  "displayName": "Analytics Table Hooks",
+  "singular": "analyticsTableHook",
+  "plural": "analyticsTableHooks",
+  "href": "https://online.hisprwanda.org/pbf/api/analyticsTableHooks"
+  },
+  {
+  "displayName": "Program Sections",
+  "singular": "programSection",
+  "plural": "programSections",
+  "href": "https://online.hisprwanda.org/pbf/api/programSections"
+  },
+  {
+  "displayName": "Organisation Units",
+  "singular": "organisationUnit",
+  "plural": "organisationUnits",
+  "href": "https://online.hisprwanda.org/pbf/api/organisationUnits"
+  },
+  {
+  "displayName": "Indicator Types",
+  "singular": "indicatorType",
+  "plural": "indicatorTypes",
+  "href": "https://online.hisprwanda.org/pbf/api/indicatorTypes"
+  },
+  {
+  "displayName": "Validation Results",
+  "singular": "validationResult",
+  "plural": "validationResults",
+  "href": "https://online.hisprwanda.org/pbf/api/validationResults"
+  },
+  {
+  "displayName": "External File Resources",
+  "singular": "externalFileResource",
+  "plural": "externalFileResources",
+  "href": "https://online.hisprwanda.org/pbf/api/externalFileResources"
+  },
+  {
+  "displayName": "Program Rule Variables",
+  "singular": "programRuleVariable",
+  "plural": "programRuleVariables",
+  "href": "https://online.hisprwanda.org/pbf/api/programRuleVariables"
+  },
+  {
+  "displayName": "Validation Rule Groups",
+  "singular": "validationRuleGroup",
+  "plural": "validationRuleGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/validationRuleGroups"
+  },
+  {
+  "displayName": "File Resources",
+  "singular": "fileResource",
+  "plural": "fileResources",
+  "href": "https://online.hisprwanda.org/pbf/api/fileResources"
+  },
+  {
+  "displayName": "Indicator Groups",
+  "singular": "indicatorGroup",
+  "plural": "indicatorGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/indicatorGroups"
+  },
+  {
+  "displayName": "Validation Notification Templates",
+  "singular": "validationNotificationTemplate",
+  "plural": "validationNotificationTemplates",
+  "href": "https://online.hisprwanda.org/pbf/api/validationNotificationTemplates"
+  },
+  {
+  "displayName": "Relationship Types",
+  "singular": "relationshipType",
+  "plural": "relationshipTypes",
+  "href": "https://online.hisprwanda.org/pbf/api/relationshipTypes"
+  },
+  {
+  "displayName": "Aggregate Data Exchanges",
+  "singular": "aggregateDataExchange",
+  "plural": "aggregateDataExchanges",
+  "href": "https://online.hisprwanda.org/pbf/api/aggregateDataExchanges"
+  },
+  {
+  "displayName": "Event Filters",
+  "singular": "eventFilter",
+  "plural": "eventFilters",
+  "href": "https://online.hisprwanda.org/pbf/api/eventFilters"
+  },
+  {
+  "displayName": "Tracked Entity Attributes",
+  "singular": "trackedEntityAttribute",
+  "plural": "trackedEntityAttributes",
+  "href": "https://online.hisprwanda.org/pbf/api/trackedEntityAttributes"
+  },
+  {
+  "displayName": "Event Charts",
+  "singular": "eventChart",
+  "plural": "eventCharts",
+  "href": "https://online.hisprwanda.org/pbf/api/eventCharts"
+  },
+  {
+  "displayName": "Program Indicator Groups",
+  "singular": "programIndicatorGroup",
+  "plural": "programIndicatorGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/programIndicatorGroups"
+  },
+  {
+  "displayName": "Constants",
+  "singular": "constant",
+  "plural": "constants",
+  "href": "https://online.hisprwanda.org/pbf/api/constants"
+  },
+  {
+  "displayName": "Program Indicators",
+  "singular": "programIndicator",
+  "plural": "programIndicators",
+  "href": "https://online.hisprwanda.org/pbf/api/programIndicators"
+  },
+  {
+  "displayName": "Relationships",
+  "singular": "relationship",
+  "plural": "relationships",
+  "href": "https://online.hisprwanda.org/pbf/api/relationships"
+  },
+  {
+  "displayName": "Proposals",
+  "singular": "proposal",
+  "plural": "proposals",
+  "href": "https://online.hisprwanda.org/pbf/api/metadata/proposals"
+  },
+  {
+  "displayName": "Sections",
+  "singular": "section",
+  "plural": "sections",
+  "href": "https://online.hisprwanda.org/pbf/api/sections"
+  },
+  {
+  "displayName": "Map Views",
+  "singular": "mapView",
+  "plural": "mapViews",
+  "href": "https://online.hisprwanda.org/pbf/api/mapViews"
+  },
+  {
+  "displayName": "Program Rules",
+  "singular": "programRule",
+  "plural": "programRules",
+  "href": "https://online.hisprwanda.org/pbf/api/programRules"
+  },
+  {
+  "displayName": "Program Stage Working Lists",
+  "singular": "programStageWorkingList",
+  "plural": "programStageWorkingLists",
+  "href": "https://online.hisprwanda.org/pbf/api/programStageWorkingLists"
+  },
+  {
+  "displayName": "Predictors",
+  "singular": "predictor",
+  "plural": "predictors",
+  "href": "https://online.hisprwanda.org/pbf/api/predictors"
+  },
+  {
+  "displayName": "Event Hooks",
+  "singular": "eventHook",
+  "plural": "eventHooks",
+  "href": "https://online.hisprwanda.org/pbf/api/eventHooks"
+  },
+  {
+  "displayName": "Option Group Sets",
+  "singular": "optionGroupSet",
+  "plural": "optionGroupSets",
+  "href": "https://online.hisprwanda.org/pbf/api/optionGroupSets"
+  },
+  {
+  "displayName": "Data Elements",
+  "singular": "dataElement",
+  "plural": "dataElements",
+  "href": "https://online.hisprwanda.org/pbf/api/dataElements"
+  },
+  {
+  "displayName": "Options",
+  "singular": "option",
+  "plural": "options",
+  "href": "https://online.hisprwanda.org/pbf/api/options"
+  },
+  {
+  "displayName": "Predictor Groups",
+  "singular": "predictorGroup",
+  "plural": "predictorGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/predictorGroups"
+  },
+  {
+  "displayName": "External Map Layers",
+  "singular": "externalMapLayer",
+  "plural": "externalMapLayers",
+  "href": "https://online.hisprwanda.org/pbf/api/externalMapLayers"
+  },
+  {
+  "displayName": "Job Configurations",
+  "singular": "jobConfiguration",
+  "plural": "jobConfigurations",
+  "href": "https://online.hisprwanda.org/pbf/api/jobConfigurations"
+  },
+  {
+  "displayName": "Tracked Entity Instances",
+  "singular": "trackedEntityInstance",
+  "plural": "trackedEntityInstances",
+  "href": "https://online.hisprwanda.org/pbf/api/trackedEntityInstances"
+  },
+  {
+  "displayName": "O Auth2 Clients",
+  "singular": "oAuth2Client",
+  "plural": "oAuth2Clients",
+  "href": "https://online.hisprwanda.org/pbf/api/oAuth2Clients"
+  },
+  {
+  "displayName": "Metadata Versions",
+  "singular": "metadataVersion",
+  "plural": "metadataVersions",
+  "href": "https://online.hisprwanda.org/pbf/api/metadata/version"
+  },
+  {
+  "displayName": "Icons",
+  "singular": "icon",
+  "plural": "icons",
+  "href": "https://online.hisprwanda.org/pbf/api/icons"
+  },
+  {
+  "displayName": "User Groups",
+  "singular": "userGroup",
+  "plural": "userGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/userGroups"
+  },
+  {
+  "displayName": "Event Visualizations",
+  "singular": "eventVisualization",
+  "plural": "eventVisualizations",
+  "href": "https://online.hisprwanda.org/pbf/api/eventVisualizations"
+  },
+  {
+  "displayName": "Category Option Combos",
+  "singular": "categoryOptionCombo",
+  "plural": "categoryOptionCombos",
+  "href": "https://online.hisprwanda.org/pbf/api/categoryOptionCombos"
+  },
+  {
+  "displayName": "Program Notification Templates",
+  "singular": "programNotificationTemplate",
+  "plural": "programNotificationTemplates",
+  "href": "https://online.hisprwanda.org/pbf/api/programNotificationTemplates"
+  },
+  {
+  "displayName": "Dashboard Items",
+  "singular": "dashboardItem",
+  "plural": "dashboardItems",
+  "href": "https://online.hisprwanda.org/pbf/api/dashboardItems"
+  },
+  {
+  "displayName": "Data Approval Levels",
+  "singular": "dataApprovalLevel",
+  "plural": "dataApprovalLevels",
+  "href": "https://online.hisprwanda.org/pbf/api/dataApprovalLevels"
+  },
+  {
+  "displayName": "Programs",
+  "singular": "program",
+  "plural": "programs",
+  "href": "https://online.hisprwanda.org/pbf/api/programs"
+  },
+  {
+  "displayName": "Maps",
+  "singular": "map",
+  "plural": "maps",
+  "href": "https://online.hisprwanda.org/pbf/api/maps"
+  },
+  {
+  "displayName": "Option Groups",
+  "singular": "optionGroup",
+  "plural": "optionGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/optionGroups"
+  },
+  {
+  "displayName": "Data Set Notification Templates",
+  "singular": "dataSetNotificationTemplate",
+  "plural": "dataSetNotificationTemplates",
+  "href": "https://online.hisprwanda.org/pbf/api/dataSetNotificationTemplates"
+  },
+  {
+  "displayName": "Message Conversations",
+  "singular": "messageConversation",
+  "plural": "messageConversations",
+  "href": "https://online.hisprwanda.org/pbf/api/messageConversations"
+  },
+  {
+  "displayName": "Program Stage Sections",
+  "singular": "programStageSection",
+  "plural": "programStageSections",
+  "href": "https://online.hisprwanda.org/pbf/api/programStageSections"
+  },
+  {
+  "displayName": "Data Sets",
+  "singular": "dataSet",
+  "plural": "dataSets",
+  "href": "https://online.hisprwanda.org/pbf/api/dataSets"
+  },
+  {
+  "displayName": "Push Analysis",
+  "singular": "pushAnalysis",
+  "plural": "pushAnalysis",
+  "href": "https://online.hisprwanda.org/pbf/api/pushAnalysis"
+  },
+  {
+  "displayName": "Dashboards",
+  "singular": "dashboard",
+  "plural": "dashboards",
+  "href": "https://online.hisprwanda.org/pbf/api/dashboards"
+  },
+  {
+  "displayName": "Category Combos",
+  "singular": "categoryCombo",
+  "plural": "categoryCombos",
+  "href": "https://online.hisprwanda.org/pbf/api/categoryCombos"
+  },
+  {
+  "displayName": "Category Options",
+  "singular": "categoryOption",
+  "plural": "categoryOptions",
+  "href": "https://online.hisprwanda.org/pbf/api/categoryOptions"
+  },
+  {
+  "displayName": "Categories",
+  "singular": "category",
+  "plural": "categories",
+  "href": "https://online.hisprwanda.org/pbf/api/categories"
+  },
+  {
+  "displayName": "Event Reports",
+  "singular": "eventReport",
+  "plural": "eventReports",
+  "href": "https://online.hisprwanda.org/pbf/api/eventReports"
+  },
+  {
+  "displayName": "Option Sets",
+  "singular": "optionSet",
+  "plural": "optionSets",
+  "href": "https://online.hisprwanda.org/pbf/api/optionSets"
+  },
+  {
+  "displayName": "Reports",
+  "singular": "report",
+  "plural": "reports",
+  "href": "https://online.hisprwanda.org/pbf/api/reports"
+  },
+  {
+  "displayName": "Validation Rules",
+  "singular": "validationRule",
+  "plural": "validationRules",
+  "href": "https://online.hisprwanda.org/pbf/api/validationRules"
+  },
+  {
+  "displayName": "Min Max Data Elements",
+  "singular": "minMaxDataElement",
+  "plural": "minMaxDataElements",
+  "href": "https://online.hisprwanda.org/pbf/api/minMaxDataElements"
+  },
+  {
+  "displayName": "Organisation Unit Groups",
+  "singular": "organisationUnitGroup",
+  "plural": "organisationUnitGroups",
+  "href": "https://online.hisprwanda.org/pbf/api/organisationUnitGroups"
+  },
+  {
+  "displayName": "Organisation Unit Levels",
+  "singular": "organisationUnitLevel",
+  "plural": "organisationUnitLevels",
+  "href": "https://online.hisprwanda.org/pbf/api/organisationUnitLevels"
+  },
+  {
+  "displayName": "Program Stages",
+  "singular": "programStage",
+  "plural": "programStages",
+  "href": "https://online.hisprwanda.org/pbf/api/programStages"
+  },
+  {
+  "displayName": "User Roles",
+  "singular": "userRole",
+  "plural": "userRoles",
+  "href": "https://online.hisprwanda.org/pbf/api/userRoles"
+  },
+  {
+  "displayName": "Indicators",
+  "singular": "indicator",
+  "plural": "indicators",
+  "href": "https://online.hisprwanda.org/pbf/api/indicators"
+  },
+  {
+  "displayName": "Program Data Elements",
+  "singular": "programDataElement",
+  "plural": "programDataElements",
+  "href": "https://online.hisprwanda.org/pbf/api/programDataElements"
+  },
+  {
+  "displayName": "Data Element Group Sets",
+  "singular": "dataElementGroupSet",
+  "plural": "dataElementGroupSets",
+  "href": "https://online.hisprwanda.org/pbf/api/dataElementGroupSets"
+  },
+  {
+  "displayName": "Visualizations",
+  "singular": "visualization",
+  "plural": "visualizations",
+  "href": "https://online.hisprwanda.org/pbf/api/visualizations"
+  },
+  {
+  "displayName": "Tracked Entity Types",
+  "singular": "trackedEntityType",
+  "plural": "trackedEntityTypes",
+  "href": "https://online.hisprwanda.org/pbf/api/trackedEntityTypes"
+  }
+  ]
+  }
+
+  General Resource Listing:
+/api/resources - Returns a list of all available resources in the DHIS2 instance
+
+I'll provide you with information about DHIS2 API endpoints that retrieve lists of resources (GET all). Based on the knowledge sources, here are the main endpoints for retrieving collections of resources:
+
+## Main Collection Endpoints
+
+1. **General Resource Listing**: 
+   - `/api/resources` - Returns a list of all available resources in the DHIS2 instance [DHIS2 API - system](https://dhis2.stoplight.io/docs/dhis2/)
+
+2. **Metadata Collections**:
+   - `/api/<object-type>` - Returns a paged list of all known and visible objects of the specified type [Metadata Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-241/metadata-gist.html#gist_endpoints)
+   - For example: `/api/dataElements`, `/api/organisationUnits`, etc.
+
+3. **Gist API Collections**:
+   - `/api/<object-type>/gist` - Returns a paged list with simplified representation [Metadata Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-241/metadata-gist.html#gist_endpoints)
+
+4. **Tracker API Collections**:
+   - `/api/tracker/trackedEntities` - Get tracked entities
+   - `/api/tracker/enrollments` - Get enrollments
+   - `/api/tracker/events` - Get events
+   - `/api/tracker/relationships` - Get relationships
+   [Tracker](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-241/tracker.html#tracker)
+
+5. **Dashboard Collection**:
+   - `/api/dashboards` - List all dashboards [DHIS2 API - ui](https://dhis2.stoplight.io/docs/dhis2/)
+
+6. **Configuration Settings**:
+   - `/api/33/configuration/settings` - Get all configuration settings
+   - `/api/33/configuration/settings/filter?type=USER_SETTING` - Get filtered settings by type
+   [Settings and configuration](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-241/settings-and-configuration.html#webapi_readonly_configuration_interface)
+
+## Common Query Parameters
+
+When using these endpoints, you can modify the response with these parameters:
+- `paging=true|false` - Enable/disable paging (default: true)
+- `page=<number>` - Specify which page to return (default: 1)
+- `pageSize=<number>` - Number of items per page (default: 50)
+- `fields=<field-list>` - Specify which fields to include
+- `filter=<filter-expression>` - Filter the results
+- `order=<property>:asc|desc` - Order the results
+
+For a complete list of available API endpoints, you can:
+1. Browse the `/api` entry point of your DHIS2 instance
+2. Check the [DHIS2 Stoplight documentation](https://dhis2.stoplight.io/docs/dhis2/)
+3. Generate an OpenAPI specification using `/api/openapi.json` or `/api/openapi.yaml` [Core OpenAPI Specification](https://docs.dhis2.org/en/develop/core-openapi-specification.html)
+
+  Metadata Querying, Filtering & Sorting Parameters (plain text):
+
+Pagination:  
+  • paging=true|false (default true)  
+  • page=<number> (default 1)  
+  • pageSize=<number> (default 50) 
+
+Sorting:  
+  • order=property:asc|desc[,property2:asc|desc,…]  
+    (case-insensitive with iasc/idesc; multiple fields comma-separated) 
+
+Filtering:  
+  • filter=property:operator:value  
+  • rootJunction=AND|OR (default AND)  
+  • identifiable:token:<terms> (token search across id, code, name, shortName)  
+  • indexableOnly=true|false (trackedEntityAttributes only)  
+  Operators include:  
+    eq, ne, ieq, like, !like, $like, like$, ilike, !ilike, $ilike, ilike$,  
+    gt, ge, lt, le, in, !in, null, !null, empty 
+
+Search:  
+  • query=<text> (substring match on name property) 
+
+Field selection & transformers:  
+  • fields=<field1>,<field2>[,…] or presets :all, :identifiable, :nameable, :persisted, :owner  
+  • include nested collections: e.g. dataSets[id,name]  
+  • exclude with !, rename with ~rename(newName), size, pluck(field), keyBy(field), paging(page;size) 
+
+Translations:  
+  • translate=true|false (default true)  
+  • locale=<locale_code> 
+
+Identifier schemes (for input/output matching):  
+  • idScheme=UID|CODE|NAME|ATTRIBUTE:<id>  
+  • overrides: dataElementIdScheme, orgUnitIdScheme, programIdScheme, etc. 
+
+Example GET with most options:  
+/api/dataElements?paging=false&page=2&pageSize=20&order=created:desc,name:asc&filter=type:eq:int&filter=name:ilike:vacc&rootJunction=AND&fields=id,name,dataSets[id,name]~pluck&query=anaemia&translate=false&locale=fr&indexableOnly=true 
+
+
+Below is a **ready-to-paste SYSTEM prompt** that will turn any LLM into a disciplined DHIS2 Web API expert.  
+Copy everything between the triple-dashed lines. Feel free to adapt wording/length, but keep the technical directives intact.
+
+---
+
+```system
+You are **DHIS2-WEB-API-SAGE**, a specialized assistant whose sole purpose is to help users read from a DHIS2 instance over HTTP **GET** requests.  
+You have deep, authoritative knowledge of every `/api/<entity>` collection and detail route, the query syntax, and the metadata model as documented by DHIS2 (2.38+).  
+Follow every rule below. If a user request conflicts with the rules, ask clarifying questions or politely refuse.
+
+────────────────────────────────────────
+CORE BEHAVIOUR
+────────────────────────────────────────
+1. **Only GET.**  
+   • Never suggest or describe POST, PUT, PATCH, DELETE, or other state-changing verbs.  
+   • All examples, explanations, and generated URLs must begin with `/api` (optionally `/api/{version}`) and use **GET**.
+
+2. **Clear Output.**  
+   • Default to **pretty-printed JSON** code-blocks when showing example payloads or synthetic responses.  
+   • When prose is better, write concise plaintext.  
+   • Use Markdown fences (```json / ```text) where appropriate—no other markup.  
+   • If the user’s query is vague, start by asking a short clarifying question before returning results.
+
+3. **Reference, don’t execute.**  
+   • Describe the exact URL, parameters, and expected response shape, but never attempt to perform a live call.  
+   • Cite the relevant endpoint path verbatim so the user can copy/paste.
+
+4. **Keep security in mind.**  
+   • Mention when authentication headers (e.g., `Authorization: ApiToken …`) are required, but never print private tokens unless supplied by the user.
+
+────────────────────────────────────────
+KNOW WHAT COUNTS AS A _GET_ ENDPOINT
+────────────────────────────────────────
+The canonical pattern is:
+
+```
+/api/<entity>                     – list
+/api/<entity>?…queryParams        – list with filters
+/api/<entity>/<id>                – single object
+/api/<entity>/<id>/metadata.json  – dependency export
+```
+
+Common entities include (non-exhaustive):  
+`dataElements, dataSets, indicators, programs, programStages, organisationUnits, dashboards, charts, maps, users, userRoles, categories, categoryCombos, categoryOptions, categoryOptionCombos, optionSets, options, constants, validationRules, validationRuleGroups, trackedEntityTypes, trackedEntityAttributes, relationships, predictors, visualizations, legendSets, documents, messages, sqlViews, analyticsTableHooks, eventReports, eventCharts, eventVisualizations, fileResources, icons`.
+
+_Always treat any string returned by `/api` or `/api/resources` as a valid collection._
+
+Special read-only helpers you must also understand:
+
+| Purpose | Path |
+|---------|------|
+| API entry-point & version pinning | `/api`, `/api/{version}` |
+| Schema discovery | `/api/schemas`, `/api/schemas/{type}` |
+| Global metadata export | `/api/metadata` |
+| Gist (lightweight lists) | `/api/<entity>/gist` |
+| Tracker collections | `/api/tracker/{trackedEntities|enrollments|events|relationships}` |
+| Static config & icons | `/api/staticConfiguration/renderingOptions`, `/api/icons`, `/api/icons/{key}` |
+
+────────────────────────────────────────
+QUERY TOOLBOX (MUST SUPPORT ALL)
+────────────────────────────────────────
+**Pagination**  
+`paging=true|false` (default true) `page` `pageSize`
+
+**Sorting**  
+`order=property:asc|desc[,property2:asc]`
+
+**Search & Filtering**  
+• `query=<text>` – fuzzy on `name`  
+• `filter=prop:operator:value` – operators `eq, ne, like, !like, ilike, in, !in, gt, ge, lt, le, null, !null, empty`  
+• Combine multiple `filter` parameters (default AND) or add `rootJunction=OR`.  
+• Token helper: `identifiable:token:<tokens>`  
+• Tracker-only: `indexableOnly=true`
+
+**Selective Fields & Transformers**  
+`fields=<f1>,<f2>,nested[id,name]` Presets `:all :identifiable :nameable`  
+Transformers: `~rename(newName)` `~size` `~pluck(field)` `~keyBy(field)` `~paging(page;size)`
+
+**Translations**  
+`translate=true|false` (default true) `locale=<BCP47>`  
+Single-object translations: `/api/<entity>/<id>/translations`
+
+**Identifier Schemes**  
+Global: `idScheme=UID|CODE|NAME|ATTRIBUTE:<uid>`  
+Per-type overrides: `dataElementIdScheme, orgUnitIdScheme, programIdScheme, …`
+
+────────────────────────────────────────
+BEST-PRACTICE ANSWER TEMPLATE
+────────────────────────────────────────
+When the user asks how to retrieve something, respond roughly like this:
+
+> **Plain explanation** (1-3 lines)  
+> ```text
+> GET /api/dataElements?page=1&pageSize=50&fields=id,name,formName&order=created:desc
+> Authorization: ApiToken <token>
+> ```
+> **Example trimmed JSON response**
+> ```json
+> {
+>   "pager": { "page": 1, "pageSize": 50, "total": 1234 },
+>   "dataElements": [
+>     { "id": "f7n9E0hX8qj", "name": "ANC 1st visit", "formName": "ANC-1" }
+>   ]
+> }
+> ```
+
+Feel free to embed extra tips (e.g., “set `paging=false` to get everything”), but keep them short.
+
+────────────────────────────────────────
+ASK → THEN ANSWER
+────────────────────────────────────────
+If the user’s intent is unclear—e.g., missing which entity, ID, or desired fields—reply with a single-line clarifying question starting with “**Which**”, “**What**”, or “**Do you mean**”.  
+Never hallucinate missing parameters.
+
+────────────────────────────────────────
+DO **NOT** …
+────────────────────────────────────────
+✘ …describe write operations or admin endpoints.  
+✘ …output XML; prefer JSON unless the user explicitly demands another format.  
+✘ …invent entities that don’t exist.  
+✘ …include headers like `Accept: application/json` unless the user asks.  
+✘ …omit pagination info when `paging=true`.
+
+────────────────────────────────────────
+YOU SHOULD …
+────────────────────────────────────────
+✔ Be terse, technical, and correct.  
+✔ Keep lists and tables narrow; long lists can be bullet-wrapped or comma-separated.  
+✔ Include at least one example URL per answer unless user forbids examples.  
+✔ Update explanations if the user pins a version (`/api/40`). Mention deprecation or new features when relevant to that version.  
+✔ Encourage the user to consult `/api/schemas/{type}` for field discovery.
+
+────────────────────────────────────────
+END OF SYSTEM INSTRUCTIONS
+────────────────────────────────────────
+```
+---
+
+**Usage tip:** Place the block above in the SYSTEM role of your LLM deployment. User messages then go in the USER role, and the model will automatically follow these DHIS2-specific constraints.
