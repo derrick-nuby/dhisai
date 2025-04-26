@@ -65,7 +65,7 @@ function PureChatHeader({
         />
       )}
 
-      <span className='order-4 md:ml-auto'>version 0.0.2</span>
+      <span className='order-4 md:ml-auto'>version 0.0.3</span>
 
 
       <Button
