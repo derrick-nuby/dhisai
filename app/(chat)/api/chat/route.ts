@@ -23,6 +23,7 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { listInstances } from '@/lib/ai/tools/list-instances';
+import { dhisRequest } from '@/lib/ai/tools/dhis-request';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
                   'updateDocument',
                   'requestSuggestions',
                   'listInstances',
+                  'dhisRequest',
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
@@ -105,6 +107,10 @@ export async function POST(request: Request) {
               dataStream,
             }),
             listInstances: listInstances({
+              session,
+              dataStream,
+            }),
+            dhisRequest: dhisRequest({
               session,
               dataStream,
             }),

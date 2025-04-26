@@ -473,26 +473,30 @@ export async function saveInstance({
 
 export async function getInstancesByUserId(userId: string) {
   try {
+    // Query instances from the database based on the user ID
     return await db
       .select()
       .from(instance)
       .where(eq(instance.userId, userId))
-      .orderBy(desc(instance.createdAt));
+      .orderBy(asc(instance.name));
   } catch (error) {
-    console.error('Failed to get instances by user id from database');
+    console.error('Failed to get instances by user ID from database', error);
     throw error;
   }
 }
 
-export async function getInstanceById(id: string) {
+export async function getInstanceById(instanceId: string) {
   try {
-    const [selectedInstance] = await db
+    // Get instance directly from the database by ID
+    const [foundInstance] = await db
       .select()
       .from(instance)
-      .where(eq(instance.id, id));
-    return selectedInstance;
+      .where(eq(instance.id, instanceId))
+      .limit(1);
+    
+    return foundInstance || null;
   } catch (error) {
-    console.error('Failed to get instance by id from database');
+    console.error('Failed to get instance by ID from database', error);
     throw error;
   }
 }
