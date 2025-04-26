@@ -13,11 +13,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: 'DHIS2 AI Assistant - Simplify Health Data Analysis',
-      template: '%s | DHIS2 AI Assistant',
+      default: 'Dharsi AI Assistant - Simplify Health Data Analysis',
+      template: '%s | Dharsi AI Assistant',
     },
     description:
-      'The DHIS2 AI Assistant simplifies the process of querying and analyzing health data using artificial intelligence. Leverage natural language to interact with your DHIS2 instance and make data-driven decisions.',
+      'I am Dharsi, how can I help you? The Dharsi AI Assistant simplifies the process of querying and analyzing health data using artificial intelligence. Leverage natural language to interact with your DHIS2 instance and make data-driven decisions.',
     keywords: [
       'DHIS2',
       'health data',
@@ -27,10 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
       'public health',
       'data visualization',
       'artificial intelligence',
+      'Dharsi',
     ],
-    authors: [{ name: 'DHIS2 AI Team' }],
-    creator: 'DHIS2 AI Team',
-    publisher: 'DHIS2 AI Inc.',
+    authors: [{ name: 'Dharsi AI Team' }],
+    creator: 'Dharsi AI Team',
+    publisher: 'Dharsi AI Inc.',
     formatDetection: {
       email: false,
       address: false,
@@ -40,26 +41,26 @@ export async function generateMetadata(): Promise<Metadata> {
       type: 'website',
       locale: 'en_US',
       url: siteUrl,
-      siteName: 'DHIS2 AI Assistant',
-      title: 'DHIS2 AI Assistant - Simplify Health Data Analysis',
+      siteName: 'Dharsi AI Assistant',
+      title: 'Dharsi AI Assistant - Simplify Health Data Analysis',
       description:
-        'The DHIS2 AI Assistant simplifies the process of querying and analyzing health data using artificial intelligence. Leverage natural language to interact with your DHIS2 instance and make data-driven decisions.',
+        'I am Dharsi, how can I help you? The Dharsi AI Assistant simplifies the process of querying and analyzing health data using artificial intelligence. Leverage natural language to interact with your DHIS2 instance and make data-driven decisions.',
       images: [
         {
           url: `${siteUrl}/images/site-main.png`,
           width: 1200,
           height: 630,
-          alt: 'DHIS2 AI Assistant - Simplify Health Data Analysis',
+          alt: 'Dharsi AI Assistant - Simplify Health Data Analysis',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'DHIS2 AI Assistant - Simplify Health Data Analysis',
+      title: 'Dharsi AI Assistant - Simplify Health Data Analysis',
       description:
-        'The DHIS2 AI Assistant simplifies the process of querying and analyzing health data using artificial intelligence. Leverage natural language to interact with your DHIS2 instance and make data-driven decisions.',
+        'I am Dharsi, how can I help you? The Dharsi AI Assistant simplifies the process of querying and analyzing health data using artificial intelligence. Leverage natural language to interact with your DHIS2 instance and make data-driven decisions.',
       images: [`${siteUrl}/images/site-main.png`],
-      creator: '@DHIS2AI',
+      creator: '@DharsiAI',
     },
     robots: {
       index: true,

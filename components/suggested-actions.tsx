@@ -13,15 +13,15 @@ interface SuggestedActionsProps {
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
     {
+      title: 'Who are you',
+      label: 'and what capabilities do you have?',
+      action: 'Who are you and what capabilities do you have?',
+    },
+    {
       title: 'What is DHIS2 and',
       label: 'how can you, as an AI, help analyze its data?',
       action: 'What is DHIS2 and how can you, as an AI, help analyze its data?',
     },    
-    {
-      title: 'Write a report on',
-      label: `the current immunization rates across Rwanda`,
-      action: `Write a report on the current immunization rates across Rwanda`,
-    },
     {
       title: 'What is the prevalence',
       label: 'of HIV in Kigali during Q2 2025?',
