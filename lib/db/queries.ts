@@ -25,6 +25,8 @@ import {
   vote,
   type DBMessage,
   type Chat,
+  instance,
+  Instance,
 } from './schema';
 import type { ArtifactKind } from '@/components/artifact';
 import { generateHashedPassword } from './utils';
@@ -419,6 +421,106 @@ export async function updateChatVisiblityById({
     return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
   } catch (error) {
     console.error('Failed to update chat visibility in database');
+    throw error;
+  }
+}
+
+// Instance-related queries
+export async function saveInstance({
+  name,
+  url,
+  apiToken,
+  description,
+  username,
+  password,
+  details,
+  verified,
+  userId,
+}: {
+  name: string;
+  url: string;
+  apiToken?: string;
+  description?: string;
+  username?: string;
+  password?: string;
+  details?: any;
+  verified?: boolean;
+  userId: string;
+}) {
+  try {
+    const now = new Date();
+    return await db
+      .insert(instance)
+      .values({
+        name,
+        url,
+        apiToken,
+        description,
+        username,
+        password,
+        details,
+        verified: verified || false,
+        userId,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+  } catch (error) {
+    console.error('Failed to save instance in database');
+    throw error;
+  }
+}
+
+export async function getInstancesByUserId(userId: string) {
+  try {
+    return await db
+      .select()
+      .from(instance)
+      .where(eq(instance.userId, userId))
+      .orderBy(desc(instance.createdAt));
+  } catch (error) {
+    console.error('Failed to get instances by user id from database');
+    throw error;
+  }
+}
+
+export async function getInstanceById(id: string) {
+  try {
+    const [selectedInstance] = await db
+      .select()
+      .from(instance)
+      .where(eq(instance.id, id));
+    return selectedInstance;
+  } catch (error) {
+    console.error('Failed to get instance by id from database');
+    throw error;
+  }
+}
+
+export async function updateInstanceById({
+  id,
+  data,
+}: {
+  id: string;
+  data: Partial<Omit<Instance, 'id' | 'userId' | 'createdAt'>>;
+}) {
+  try {
+    return await db
+      .update(instance)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(instance.id, id))
+      .returning();
+  } catch (error) {
+    console.error('Failed to update instance in database');
+    throw error;
+  }
+}
+
+export async function deleteInstanceById(id: string) {
+  try {
+    return await db.delete(instance).where(eq(instance.id, id)).returning();
+  } catch (error) {
+    console.error('Failed to delete instance from database');
     throw error;
   }
 }

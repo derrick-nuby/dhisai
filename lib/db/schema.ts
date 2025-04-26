@@ -146,3 +146,22 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export const instance = pgTable('Instance', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  name: text('name').notNull(),
+  url: text('url').notNull(),
+  apiToken: text('apiToken'),
+  description: text('description'),
+  username: text('username'),
+  password: text('password'),
+  details: json('details'),
+  verified: boolean('verified').notNull().default(false),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp('createdAt').notNull(),
+  updatedAt: timestamp('updatedAt').notNull(),
+});
+
+export type Instance = InferSelectModel<typeof instance>;

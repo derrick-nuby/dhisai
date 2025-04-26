@@ -5,16 +5,9 @@ import { InstanceList } from '@/components/instance-list';
 import { AddInstanceModal } from '@/components/add-instance-modal';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { initialInstances } from '@/data/data';
 
 export default function SettingsPage() {
-  const [instances, setInstances] = useState(initialInstances);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const addInstance = (newInstance: any) => {
-    setInstances([...instances, newInstance]);
-    setIsModalOpen(false);
-  };
 
   return (
     <main className="py-6 mx-4 md:py-16 md:mx-20">
@@ -27,14 +20,13 @@ export default function SettingsPage() {
       </div>
 
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Instances</h2>
-        <InstanceList instances={instances} />
+        <h2 className="text-xl font-semibold mb-4">DHIS2 Instances</h2>
+        <InstanceList />
       </div>
 
       <AddInstanceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAdd={addInstance}
       />
     </main>
   );

@@ -19,34 +19,44 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { toast } from '@/components/toast';
+
 
 interface AddInstanceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (instance: any) => void;
 }
 
 interface FormErrors {
+  name?: string;
   url?: string;
-  token?: string;
+  apiToken?: string;
 }
 
 export function AddInstanceModal({
   isOpen,
   onClose,
-  onAdd,
 }: AddInstanceModalProps) {
+  const router = useRouter();
+  const [name, setName] = useState('');
   const [url, setUrl] = useState('');
-  const [token, setToken] = useState('');
+  const [apiToken, setApiToken] = useState('');
   const [description, setDescription] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isCredentialsOpen, setIsCredentialsOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
+
+    // Validate name
+    if (!name) {
+      newErrors.name = 'Name is required';
+    }
 
     // Validate URL
     if (!url) {
@@ -55,46 +65,71 @@ export function AddInstanceModal({
       newErrors.url = 'URL must start with http:// or https://';
     }
 
-    // Validate token
-    if (!token) {
-      newErrors.token = 'API token is required';
-    } else if (token.length < 6) {
-      newErrors.token = 'API token must be at least 6 characters';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateForm() || isSubmitting) {
       return;
     }
 
-    // Create a new instance object with the form data
-    const newInstance = {
-      contextPath: url,
-      systemName: description || 'New Instance',
-      version: 'N/A',
-      systemId: crypto.randomUUID(),
-      databaseInfo: {
-        user: username || 'N/A',
-      },
-      // Add other required fields with default values
-      serverDate: new Date().toISOString(),
-      serverTimeZoneId: 'Etc/UTC',
-      serverTimeZoneDisplayName: 'Coordinated Universal Time',
-      calendar: 'iso8601',
-      dateFormat: 'yyyy-mm-dd',
-    };
+    setIsSubmitting(true);
 
-    onAdd(newInstance);
+    try {
+      const response = await fetch('/api/instances', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          url,
+          apiToken: apiToken || undefined,
+          description: description || undefined,
+          username: username || undefined,
+          password: password || undefined,
+        }),
+      });
 
-    // Reset form
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add instance');
+      }
+
+      const newInstance = await response.json();
+      
+      toast({
+        type: 'success',
+        description: `Instance ${name} was added successfully${newInstance.verified ? ' and verified' : ''}`,
+      });
+
+      
+
+      // Reset form
+      resetForm();
+      
+      // Close modal
+      onClose();
+      
+      // Refresh the instances list
+      router.refresh();
+    } catch (error) {
+      toast({
+        type: 'error',
+        description: error instanceof Error ? error.message : 'Failed to add instance',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const resetForm = () => {
+    setName('');
     setUrl('');
-    setToken('');
+    setApiToken('');
     setDescription('');
     setUsername('');
     setPassword('');
@@ -103,7 +138,7 @@ export function AddInstanceModal({
   };
 
   const handleClose = () => {
-    setErrors({});
+    resetForm();
     onClose();
   };
 
@@ -111,11 +146,36 @@ export function AddInstanceModal({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add New Instance</DialogTitle>
+          <DialogTitle>Add New DHIS2 Instance</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label
+                htmlFor="name"
+                className={errors.name ? 'text-destructive' : ''}
+              >
+                Instance Name
+              </Label>
+              <Input
+                id="name"
+                placeholder="My DHIS2 Instance"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) {
+                    setErrors({ ...errors, name: undefined });
+                  }
+                }}
+                className={errors.name ? 'border-destructive' : ''}
+                disabled={isSubmitting}
+              />
+              {errors.name && (
+                <p className="text-xs text-destructive">{errors.name}</p>
+              )}
+            </div>
+
             <div className="grid gap-2">
               <Label
                 htmlFor="url"
@@ -125,7 +185,7 @@ export function AddInstanceModal({
               </Label>
               <Input
                 id="url"
-                placeholder="https://example.com/instance"
+                placeholder="https://play.dhis2.org/demo"
                 value={url}
                 onChange={(e) => {
                   setUrl(e.target.value);
@@ -134,6 +194,7 @@ export function AddInstanceModal({
                   }
                 }}
                 className={errors.url ? 'border-destructive' : ''}
+                disabled={isSubmitting}
               />
               {errors.url && (
                 <p className="text-xs text-destructive">{errors.url}</p>
@@ -142,27 +203,31 @@ export function AddInstanceModal({
 
             <div className="grid gap-2">
               <Label
-                htmlFor="token"
-                className={errors.token ? 'text-destructive' : ''}
+                htmlFor="apiToken"
+                className={errors.apiToken ? 'text-destructive' : ''}
               >
-                API Token
+                API Token (PAT)
               </Label>
               <Input
-                id="token"
+                id="apiToken"
                 type="password"
-                placeholder="Enter API token"
-                value={token}
+                placeholder="d2pat_XXXXXXXXXXXX"
+                value={apiToken}
                 onChange={(e) => {
-                  setToken(e.target.value);
-                  if (errors.token) {
-                    setErrors({ ...errors, token: undefined });
+                  setApiToken(e.target.value);
+                  if (errors.apiToken) {
+                    setErrors({ ...errors, apiToken: undefined });
                   }
                 }}
-                className={errors.token ? 'border-destructive' : ''}
+                className={errors.apiToken ? 'border-destructive' : ''}
+                disabled={isSubmitting}
               />
-              {errors.token && (
-                <p className="text-xs text-destructive">{errors.token}</p>
+              {errors.apiToken && (
+                <p className="text-xs text-destructive">{errors.apiToken}</p>
               )}
+              <p className="text-xs text-muted-foreground">
+                Personal Access Token for API authentication. If provided, we'll verify the instance.
+              </p>
             </div>
 
             <div className="grid gap-2">
@@ -173,6 +238,7 @@ export function AddInstanceModal({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
+                disabled={isSubmitting}
               />
             </div>
 
@@ -184,7 +250,7 @@ export function AddInstanceModal({
               <div className="flex items-center justify-between px-4 py-2 border-b">
                 <h3 className="text-sm font-medium">Credentials (Optional)</h3>
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
+                  <Button variant="ghost" size="sm" className="p-0 h-8 w-8" disabled={isSubmitting}>
                     {isCredentialsOpen ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -202,6 +268,7 @@ export function AddInstanceModal({
                       placeholder="Enter username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -212,6 +279,7 @@ export function AddInstanceModal({
                       placeholder="Enter password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -220,10 +288,19 @@ export function AddInstanceModal({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit">Add Instance</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Adding...
+                </>
+              ) : (
+                'Add Instance'
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
