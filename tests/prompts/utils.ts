@@ -210,32 +210,6 @@ As we move forward, Silicon Valley continues to reinvent itself. While some pred
         usage: { completionTokens: 10, promptTokens: 3 },
       },
     ];
-  } else if (compareMessages(recentMessage, TEST_PROMPTS.GET_WEATHER_CALL)) {
-    return [
-      {
-        type: 'tool-call',
-        toolCallId: 'call_456',
-        toolName: 'getWeather',
-        toolCallType: 'function',
-        args: JSON.stringify({ latitude: 37.7749, longitude: -122.4194 }),
-      },
-      {
-        type: 'finish',
-        finishReason: 'stop',
-        logprobs: undefined,
-        usage: { completionTokens: 10, promptTokens: 3 },
-      },
-    ];
-  } else if (compareMessages(recentMessage, TEST_PROMPTS.GET_WEATHER_RESULT)) {
-    return [
-      ...textToDeltas('The current temperature in San Francisco is 17°C.'),
-      {
-        type: 'finish',
-        finishReason: 'stop',
-        logprobs: undefined,
-        usage: { completionTokens: 10, promptTokens: 3 },
-      },
-    ];
   }
 
   return [{ type: 'text-delta', textDelta: 'Unknown test prompt!' }];
