@@ -2,7 +2,7 @@
 
 ## Project Description
 
-Welcome to the DHIS2 AI Assistant project! This is an innovative application that leverages artificial intelligence to interact with DHIS2, a widely used health management data platform. The DHIS2 AI Assistant enables users to query, analyze, and visualize health data from DHIS2 systems using natural language, making it easier for health officials, data analysts, and other stakeholders to access and interpret complex data.
+Welcome to the DHIS2AI Assistant project! This is an innovative application that leverages artificial intelligence to interact with DHIS2, a widely used health management data platform. The DHIS2 AI Assistant enables users to query, analyze, and visualize health data from DHIS2 systems using natural language, making it easier for health officials, data analysts, and other stakeholders to access and interpret complex data.
 
 ## Key Features
 
